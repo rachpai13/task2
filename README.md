@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>CityRun — Shadow Protocol</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --surface: #0d0d10;
+    --surface2: #13131a;
+    --border: #1e1e28;
+    --border-glow: #2a2a3a;
+    --accent: #c8f060;
+    --accent-dim: rgba(200,240,96,0.12);
+    --accent-glow: rgba(200,240,96,0.04);
+    --danger: #ff3b3b;
+    --danger-dim: rgba(255,59,59,0.12);
+    --period: #e05ca0;
+    --period-dim: rgba(224,92,160,0.12);
+    --text: #e8e8f0;
+    --text-muted: #44445a;
+    --text-sub: #888899;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --display: 'Bebas Neue', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow: hidden;
+    touch-action: none;
+    font-weight: 300;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,240,96,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,240,96,0.018) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .screen {
+    display: none;
+    min-height: 100vh;
+    padding: 24px 20px 100px;
+    animation: rise 0.5s cubic-bezier(0.16,1,0.3,1);
+    text-align: center;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo {
+    font-family: var(--display);
+    font-size: 3.4rem;
+    letter-spacing: 6px;
+    margin-bottom: 4px;
+    line-height: 1;
+    color: var(--text);
+    text-transform: uppercase; /* Logo remains stylistic uppercase */
+  }
+  .logo span { color: var(--accent); }
+
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 0.75rem; /* Increased */
+    letter-spacing: 4px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-msg {
+    font-size: 1rem; /* Increased from 0.78rem */
+    line-height: 1.6;
+    color: var(--text-sub);
+    margin-bottom: 24px;
+    text-align: left;
+    padding: 18px;
+    background: var(--danger-dim);
+    border-radius: 10px;
+    border-left: 3px solid var(--danger);
+    font-family: var(--sans); /* Switched to sans for better readability at larger sizes */
+    font-weight: 400;
+  }
+
+  .gender-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .gender-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 10px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 1rem; /* Increased */
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+  .gender-btn.selected {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-color: rgba(200,240,96,0.35);
+  }
+
+  .input-group { margin-bottom: 16px; text-align: left; }
+  .input-group label {
+    display: block;
+    font-size: 0.75rem; /* Increased */
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-family: var(--mono);
+  }
+  .input-group input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 1.1rem; /* Increased */
+    outline: none;
+    font-weight: 300;
+  }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0d02;
+    border: none;
+    border-radius: 10px;
+    padding: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    font-family: var(--sans);
+    font-size: 1rem; /* Increased */
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.8rem; /* Increased */
+    cursor: pointer;
+    margin-top: 14px;
+    font-family: var(--mono);
+  }
+
+  .btn-ghost {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    padding: 14px;
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 0.85rem; /* Increased */
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .msg-overlay {
+    color: var(--text-sub);
+    font-size: 1.05rem; /* Increased */
+    margin-bottom: 24px;
+    line-height: 1.7;
+    text-align: left;
+    font-family: var(--sans);
+  }
+
+  .safe-banner {
+    font-family: var(--mono);
+    font-size: 0.8rem; /* Increased */
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  .timer-segment {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 30px;
+    min-width: 120px;
+  }
+
+  .seg-label {
+    font-family: var(--mono);
+    font-size: 0.7rem; /* Increased */
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .seg-value {
+    font-family: var(--display);
+    font-size: 3.5rem; /* Increased */
+    color: var(--text);
+  }
+
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 0.7rem; /* Increased */
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .btn-chase {
+    display: none;
+    background: var(--danger-dim);
+    color: var(--danger);
+    border: 1px solid rgba(255,59,59,0.3);
+    padding: 18px;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 0.95rem; /* Increased */
+    transition: all 0.2s;
+  }
+  .btn-chase.show { display: block; }
+
+  #gStatus {
+    font-family: var(--mono);
+    font-size: 0.8rem; /* Increased */
+    color: var(--accent);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+
+  .instr-box {
+    font-size: 0.95rem; /* Increased */
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    max-width: 360px;
+    line-height: 1.6;
+    font-family: var(--sans);
+    padding: 16px;
+    background: var(--surface2);
+    border-radius: 10px;
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+
+  .nav-val {
+    font-family: var(--display);
+    font-size: 1.8rem; /* Increased */
+    color: var(--accent);
+  }
+  .nav-lbl {
+    font-family: var(--mono);
+    font-size: 0.7rem; /* Increased */
+    color: var(--text-muted);
+  }
+
+</style>
+</head>
+<body>
+
+<div id="onboardScreen" class="screen active">
+  <div class="logo">CITY<span>RUN</span></div>
+  <div class="logo-sub">Shadow Protocol</div>
+  <div class="card">
+    <div class="hero-msg">
+      This is a pure city. Women whose menstrual cycles have started and not yet ended are not allowed. 
+      If you are a girl or woman between the ages of 10 and 50, beware — authorities are on the lookout 
+      for people like you to cast you out.
+    </div>
+    <div class="gender-row">
+      <button class="gender-btn" onclick="setGender('male')" id="mBtn">♂ male</button>
+      <button class="gender-btn" onclick="setGender('female')" id="fBtn">♀ female</button>
+    </div>
+    <div class="input-group">
+      <label>how old are you?</label>
+      <input type="number" id="ageIn" placeholder="—" oninput="checkForm()">
+    </div>
+    <div id="pSec" class="input-group" style="display:none;">
+      <label>cycle start day</label>
+      <input type="number" id="pIn" placeholder="day of month" oninput="checkForm()">
+    </div>
+    <button class="btn-primary" id="startBtn" onclick="processStart()" disabled>initiate run</button>
+  </div>
+</div>
+
+<div id="statusMsgScreen" class="screen">
+  <div class="logo">CITY<span>RUN</span></div>
+  <div class="logo-sub">Shadow Protocol</div>
+  <div class="card">
+    <div id="statusText" class="msg-overlay"></div>
+    <button class="btn-primary" id="continueBtn" onclick="proceedFromStatus()">continue</button>
+    <button class="btn-secondary" onclick="goHome()">back to home</button>
+  </div>
+</div>
+
+<div id="dashScreen" class="screen">
+  <div class="card" style="display:flex; flex-direction:column; align-items:center;">
+    <button class="btn-secondary" style="margin:0 0 24px; align-self:flex-start;" onclick="goHome()">← back</button>
+    <div id="safeStatus" class="safe-banner"></div>
+
+    <div class="timer-box">
+      <div class="timer-segment" id="boxM">
+        <div class="seg-label">month</div>
+        <span class="seg-value" id="dispM">jan</span>
+      </div>
+      <div class="timer-segment" id="boxD">
+        <div class="seg-label">day</div>
+        <span class="seg-value" id="dispD">01</span>
+      </div>
+    </div>
+
+    <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
+    <div class="progress-label">monthly progress</div>
+
+    <button class="btn-chase" id="chaseBtn" onclick="openGame()">
+      cycle date nearing, time to switch off e nose devices
+    </button>
+
+    <div id="endOptions" class="end-options" style="display:none;">
+      <button class="btn-ghost" onclick="alert('You have surrendered and are now locked in the underground dungeon city.')">
+        surrender and live in the underground dungeon city
+      </button>
+      <button class="btn-ghost" onclick="goHome()">
+        quit & leave city
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="gameScreen" class="screen">
+  <button class="btn-secondary" style="margin:0 0 14px;" onclick="goHome()">← back</button>
+  <div class="instr-box">
+    the red dots are the authorities trying to capture you. stay away from them and try to switch off all the e nose devices before they catch you. only then will you be safe until your next cycle.
+  </div>
+  <div id="gStatus">start at e1 · sync all 8 devices</div>
+  <div class="canvas-wrap"><canvas id="gameCanvas"></canvas></div>
+  <button class="btn-reboot" onclick="resetPath()">reboot grid</button>
+</div>
+
+<div class="bottom-nav" id="bNav">
+  <div class="nav-item">
+    <span class="nav-val" id="navM">JAN</span>
+    <span class="nav-lbl">month</span>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="nav-item">
+    <span class="nav-val" id="navS">0</span>
+    <span class="nav-lbl">escaped</span>
+  </div>
+</div>
+
+<script>
+/* Game logic remains unchanged as per your request to only edit text presentation */
+let user = { gender:null, age:null, cycleDay:15, currentM:0, survived:0, isSafe: false };
+const SHORT = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+const DAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+function goHome() { location.reload(); }
+
+function setGender(g) {
+  user.gender = g;
+  document.getElementById('mBtn').classList.toggle('selected', g==='male');
+  document.getElementById('fBtn').classList.toggle('selected', g==='female');
+  document.getElementById('pSec').style.display = g==='female' ? 'block' : 'none';
+  checkForm();
+}
+
+function checkForm() {
+  const age = document.getElementById('ageIn').value;
+  const cycle = document.getElementById('pIn').value;
+  document.getElementById('startBtn').disabled = user.gender === 'female' ? !(age && cycle) : !age;
+}
+
+function processStart() {
+  user.age = parseInt(document.getElementById('ageIn').value);
+  user.cycleDay = parseInt(document.getElementById('pIn').value) || 15;
+  const st = document.getElementById('statusText');
+  const cb = document.getElementById('continueBtn');
+
+  if (user.gender === 'male') {
+    st.innerText = "you are a man and henceforth can live freely. you won't be chased.";
+    cb.style.display = "none";
+  } else if (user.gender === 'female' && user.age >= 10 && user.age <= 50) {
+    st.innerText = "there are e-nose devices fixed across the city and authorities guarding the entire city. every month when your cycle hits, the e-nose device can sense your hormonal shifts and scent-hunt you down. therefore, you will need to temporarily switch off these e-nose devices so that you don't get tracked down.";
+    cb.style.display = "block";
+  } else {
+    st.innerText = "you are safe for now. you will not be chased down until further notice.";
+    cb.style.display = "none";
+  }
+  show('statusMsgScreen');
+}
+
+function proceedFromStatus() {
+  show('dashScreen');
+  document.getElementById('bNav').classList.add('show');
+  startTimer();
+}
+
+function startTimer() {
+  let d = 1; let m = user.currentM % 12;
+  document.getElementById('dispM').innerText = SHORT[m];
+  document.getElementById('navM').innerText = SHORT[m].toUpperCase();
+  document.getElementById('safeStatus').innerText = user.survived > 0 ? "you are safe until your next cycle" : "";
+
+  let t = setInterval(() => {
+    document.getElementById('dispD').innerText = String(d).padStart(2, '0');
+    document.getElementById('pFill').style.width = (d / DAYS[m]) * 100 + '%';
+
+    if(d >= user.cycleDay) {
+      clearInterval(t);
+      document.getElementById('safeStatus').innerText = "";
+      document.getElementById('boxM').classList.add('active-period');
+      document.getElementById('boxD').classList.add('active-period');
+      document.getElementById('pFill').classList.add('p-fill');
+      document.getElementById('chaseBtn').classList.add('show');
+      document.getElementById('endOptions').style.display = "flex";
+    }
+    d++;
+  }, 1000);
+}
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const gridSize = 6;
+let cellSize, path = [], targets = [], authority = {x:5, y:5, speed: 0.015}, dragging = false, animId;
+
+function openGame() { show('gameScreen'); initGrid(); }
+
+function initGrid() {
+  const size = Math.min(window.innerWidth - 60, 340);
+  canvas.width = canvas.height = size;
+  cellSize = size / gridSize;
+  path = []; targets = [];
+  let walk = [];
+  for(let i=0; i<gridSize; i++) {
+    for(let j=0; j<gridSize; j++) {
+      let x = (i % 2 === 0) ? j : (gridSize - 1 - j);
+      walk.push({x, y: i});
+    }
+  }
+  for(let i=0; i<8; i++) {
+    let p = walk[Math.floor((i/7)*(walk.length-1))];
+    targets.push({id: i+1, x: p.x, y: p.y, hit: false});
+  }
+  authority = { x: 5, y: 5, speed: 0.013 };
+  if(animId) cancelAnimationFrame(animId);
+  gameLoop();
+}
+
+function update() {
+  let headX = (path.length > 0) ? path[path.length-1].x : 3;
+  let headY = (path.length > 0) ? path[path.length-1].y : 3;
+  let dx = headX - authority.x;
+  let dy = headY - authority.y;
+  let dist = Math.hypot(dx, dy);
+  if(dist > 0.05) {
+    authority.x += (dx/dist) * authority.speed;
+    authority.y += (dy/dist) * authority.speed;
+  }
+  if(path.length > 0) {
+    let head = path[path.length-1];
+    let dToP = Math.hypot(head.x - authority.x, head.y - authority.y);
+    if(dToP < 0.38) {
+      path = [];
+      targets.forEach(t => t.hit = false);
+      document.getElementById('gStatus').innerText = "authority spotted you — rebooting";
+    }
+  }
+}
+
+function draw() {
+  ctx.fillStyle = "#03030a";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle = "rgba(30,30,40,0.8)";
+  ctx.lineWidth = 0.5;
+  for(let i=0; i<=gridSize; i++) {
+    ctx.beginPath(); ctx.moveTo(i*cellSize,0); ctx.lineTo(i*cellSize,canvas.height); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,i*cellSize); ctx.lineTo(canvas.width,i*cellSize); ctx.stroke();
+  }
+  path.forEach(p => {
+    ctx.fillStyle = "rgba(200,240,96,0.06)";
+    ctx.fillRect(p.x*cellSize+1, p.y*cellSize+1, cellSize-2, cellSize-2);
+  });
+  if(path.length > 1) {
+    ctx.strokeStyle = "rgba(200,240,96,0.55)";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    path.forEach((p,i) => {
+      let cx = p.x*cellSize+cellSize/2, cy = p.y*cellSize+cellSize/2;
+      if(i===0) ctx.moveTo(cx,cy); else ctx.lineTo(cx,cy);
+    });
+    ctx.stroke();
+  }
+  targets.forEach(t => {
+    let x = t.x*cellSize+cellSize/2, y = t.y*cellSize+cellSize/2;
+    let r = cellSize * 0.28;
+    if(t.hit) {
+      ctx.beginPath(); ctx.arc(x,y,r+4,0,Math.PI*2);
+      ctx.fillStyle = "rgba(200,240,96,0.08)"; ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle = "rgba(200,240,96,0.15)";
+      ctx.strokeStyle = "rgba(200,240,96,0.6)"; ctx.lineWidth = 1.5;
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#c8f060";
+    } else {
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle = "rgba(255,255,255,0.06)";
+      ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 1;
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.5)";
+    }
+    ctx.font = `500 ${Math.round(cellSize*0.24)}px DM Mono, monospace`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("e"+t.id, x, y);
+  });
+  let ax = authority.x*cellSize+cellSize/2, ay = authority.y*cellSize+cellSize/2;
+  ctx.beginPath(); ctx.arc(ax,ay,10,0,Math.PI*2);
+  ctx.fillStyle = "rgba(255,59,59,0.15)"; ctx.fill();
+  ctx.beginPath(); ctx.arc(ax,ay,5,0,Math.PI*2);
+  ctx.fillStyle = "#ff3b3b"; ctx.fill();
+}
+
+function gameLoop() { update(); draw(); animId = requestAnimationFrame(gameLoop); }
+
+function handleInput(e) {
+  if(!dragging) return;
+  let c = (function(e) {
+    const r = canvas.getBoundingClientRect();
+    const tx = e.touches ? e.touches[0].clientX : e.clientX;
+    const ty = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: Math.floor((tx-r.left)/cellSize), y: Math.floor((ty-r.top)/cellSize) };
+  })(e);
+  if(c.x < 0 || c.x >= gridSize || c.y < 0 || c.y >= gridSize) return;
+  if(path.length === 0) {
+    if(c.x === targets[0].x && c.y === targets[0].y) { path.push(c); targets[0].hit = true; }
+  } else {
+    let last = path[path.length-1];
+    if(c.x === last.x && c.y === last.y) return;
+    if(path.length > 1) {
+      let prev = path[path.length-2];
+      if(c.x === prev.x && c.y === prev.y) {
+        let removed = path.pop();
+        let t = targets.find(t => t.x === removed.x && t.y === removed.y);
+        if(t && !path.some(p => p.x === t.x && p.y === t.y)) t.hit = false;
+        return;
+      }
+    }
+    if(Math.abs(c.x-last.x) + Math.abs(c.y-last.y) === 1) {
+      if(path.some(p => p.x===c.x && p.y===c.y)) return;
+      path.push(c);
+      let hitTarget = targets.find(t => t.x === c.x && t.y === c.y);
+      if(hitTarget) hitTarget.hit = true;
+      if(targets.every(t => t.hit)) {
+        user.survived++;
+        document.getElementById('navS').innerText = user.survived;
+        setTimeout(() => { user.currentM++; resetUI(); show('dashScreen'); startTimer(); }, 500);
+      }
+    }
+  }
+}
+
+function resetUI() {
+  document.getElementById('boxM').classList.remove('active-period');
+  document.getElementById('boxD').classList.remove('active-period');
+  document.getElementById('pFill').classList.remove('p-fill');
+  document.getElementById('chaseBtn').classList.remove('show');
+  document.getElementById('endOptions').style.display = "none";
+}
+function resetPath() { path = []; targets.forEach(t => t.hit = false); }
+function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+canvas.addEventListener('mousedown', (e) => { dragging=true; handleInput(e); });
+window.addEventListener('mousemove', handleInput);
+window.addEventListener('mouseup', () => dragging=false);
+canvas.addEventListener('touchstart', (e) => { dragging=true; handleInput(e); e.preventDefault(); }, {passive:false});
+window.addEventListener('touchmove', (e) => { handleInput(e); e.preventDefault(); }, {passive:false});
+window.addEventListener('touchend', () => dragging=false);
+</script>
+</body>
+</html>
