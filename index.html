@@ -11,14 +11,10 @@
     --surface: #0d0d10;
     --surface2: #13131a;
     --border: #1e1e28;
-    --border-glow: #2a2a3a;
     --accent: #c8f060;
     --accent-dim: rgba(200,240,96,0.12);
-    --accent-glow: rgba(200,240,96,0.04);
     --danger: #ff3b3b;
     --danger-dim: rgba(255,59,59,0.12);
-    --period: #e05ca0;
-    --period-dim: rgba(224,92,160,0.12);
     --text: #e8e8f0;
     --text-muted: #44445a;
     --text-sub: #888899;
@@ -73,15 +69,14 @@
     font-size: 3.4rem;
     letter-spacing: 6px;
     margin-bottom: 4px;
-    line-height: 1;
     color: var(--text);
-    text-transform: uppercase; /* Logo remains stylistic uppercase */
+    text-transform: uppercase;
   }
   .logo span { color: var(--accent); }
 
   .logo-sub {
     font-family: var(--mono);
-    font-size: 0.75rem; /* Increased */
+    font-size: 0.75rem;
     letter-spacing: 4px;
     color: var(--text-muted);
     margin-bottom: 32px;
@@ -95,11 +90,10 @@
     width: 100%;
     max-width: 400px;
     position: relative;
-    overflow: hidden;
   }
 
   .hero-msg {
-    font-size: 1rem; /* Increased from 0.78rem */
+    font-size: 1rem;
     line-height: 1.6;
     color: var(--text-sub);
     margin-bottom: 24px;
@@ -108,8 +102,6 @@
     background: var(--danger-dim);
     border-radius: 10px;
     border-left: 3px solid var(--danger);
-    font-family: var(--sans); /* Switched to sans for better readability at larger sizes */
-    font-weight: 400;
   }
 
   .gender-row {
@@ -126,9 +118,8 @@
     color: var(--text-muted);
     cursor: pointer;
     font-family: var(--sans);
-    font-size: 1rem; /* Increased */
+    font-size: 1rem;
     transition: all 0.2s ease;
-    font-weight: 500;
   }
   .gender-btn.selected {
     background: var(--accent-dim);
@@ -139,7 +130,7 @@
   .input-group { margin-bottom: 16px; text-align: left; }
   .input-group label {
     display: block;
-    font-size: 0.75rem; /* Increased */
+    font-size: 0.75rem;
     color: var(--text-muted);
     margin-bottom: 8px;
     font-family: var(--mono);
@@ -152,9 +143,8 @@
     padding: 13px 16px;
     color: var(--text);
     font-family: var(--mono);
-    font-size: 1.1rem; /* Increased */
+    font-size: 1.1rem;
     outline: none;
-    font-weight: 300;
   }
 
   .btn-primary {
@@ -166,81 +156,21 @@
     padding: 18px;
     font-weight: 600;
     cursor: pointer;
-    letter-spacing: 1px;
-    margin-top: 10px;
     font-family: var(--sans);
-    font-size: 1rem; /* Increased */
-    transition: all 0.2s ease;
+    font-size: 1rem;
   }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  .btn-secondary {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 0.8rem; /* Increased */
-    cursor: pointer;
-    margin-top: 14px;
-    font-family: var(--mono);
-  }
-
-  .btn-ghost {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-sub);
-    padding: 14px;
-    border-radius: 10px;
-    font-family: var(--mono);
-    font-size: 0.85rem; /* Increased */
-    cursor: pointer;
-    width: 100%;
-  }
-
-  .msg-overlay {
-    color: var(--text-sub);
-    font-size: 1.05rem; /* Increased */
-    margin-bottom: 24px;
-    line-height: 1.7;
-    text-align: left;
-    font-family: var(--sans);
-  }
-
-  .safe-banner {
-    font-family: var(--mono);
-    font-size: 0.8rem; /* Increased */
-    letter-spacing: 2px;
-    color: var(--accent);
-    margin-bottom: 24px;
-  }
-
+  .timer-box { display: flex; gap: 12px; margin-bottom: 24px; }
   .timer-segment {
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 22px 30px;
-    min-width: 120px;
+    padding: 20px;
+    flex: 1;
   }
-
-  .seg-label {
-    font-family: var(--mono);
-    font-size: 0.7rem; /* Increased */
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-
-  .seg-value {
-    font-family: var(--display);
-    font-size: 3.5rem; /* Increased */
-    color: var(--text);
-  }
-
-  .progress-label {
-    font-family: var(--mono);
-    font-size: 0.7rem; /* Increased */
-    color: var(--text-muted);
-    margin-bottom: 24px;
-  }
+  .seg-label { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; }
+  .seg-value { font-family: var(--display); font-size: 2.5rem; color: var(--text); }
 
   .btn-chase {
     display: none;
@@ -249,48 +179,66 @@
     border: 1px solid rgba(255,59,59,0.3);
     padding: 18px;
     border-radius: 12px;
-    font-weight: 500;
-    cursor: pointer;
     width: 100%;
     font-family: var(--sans);
-    font-size: 0.95rem; /* Increased */
-    transition: all 0.2s;
+    cursor: pointer;
+    animation: pulse 1.5s infinite;
+    margin-bottom: 12px;
   }
+  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
   .btn-chase.show { display: block; }
+
+  .alt-options {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .alt-options.show { display: flex; }
+
+  .btn-alt {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: var(--mono);
+    text-transform: uppercase;
+  }
+
+  .home-link {
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 
   #gStatus {
     font-family: var(--mono);
-    font-size: 0.8rem; /* Increased */
+    font-size: 0.75rem;
     color: var(--accent);
     margin-bottom: 12px;
-    letter-spacing: 1px;
+    text-transform: uppercase;
   }
 
-  .instr-box {
-    font-size: 0.95rem; /* Increased */
-    color: var(--text-muted);
-    margin-bottom: 20px;
-    max-width: 360px;
-    line-height: 1.6;
-    font-family: var(--sans);
-    padding: 16px;
-    background: var(--surface2);
-    border-radius: 10px;
-    text-align: left;
-    border: 1px solid var(--border);
-  }
+  canvas { border: 1px solid var(--border); border-radius: 8px; background: #03030a; margin-bottom: 20px; }
 
-  .nav-val {
-    font-family: var(--display);
-    font-size: 1.8rem; /* Increased */
-    color: var(--accent);
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; width: 100%;
+    background: var(--surface);
+    display: flex; justify-content: space-around;
+    padding: 15px; border-top: 1px solid var(--border);
+    transform: translateY(100%); transition: transform 0.4s ease;
   }
-  .nav-lbl {
-    font-family: var(--mono);
-    font-size: 0.7rem; /* Increased */
-    color: var(--text-muted);
-  }
-
+  .bottom-nav.show { transform: translateY(0); }
+  .nav-val { font-family: var(--display); font-size: 1.8rem; color: var(--accent); display: block; }
+  .nav-lbl { font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
 </style>
 </head>
 <body>
@@ -300,9 +248,8 @@
   <div class="logo-sub">Shadow Protocol</div>
   <div class="card">
     <div class="hero-msg">
-      This is a pure city. Women whose menstrual cycles have started and not yet ended are not allowed. 
-      If you are a girl or woman between the ages of 10 and 50, beware — authorities are on the lookout 
-      for people like you to cast you out.
+      This is a pure city. Women whose cycles are active are hunted by sensory authorities. 
+      Stay below the radar.
     </div>
     <div class="gender-row">
       <button class="gender-btn" onclick="setGender('male')" id="mBtn">♂ male</button>
@@ -321,78 +268,57 @@
 </div>
 
 <div id="statusMsgScreen" class="screen">
-  <div class="logo">CITY<span>RUN</span></div>
-  <div class="logo-sub">Shadow Protocol</div>
   <div class="card">
-    <div id="statusText" class="msg-overlay"></div>
+    <div id="statusText" style="text-align:left; line-height:1.6; margin-bottom:20px;"></div>
     <button class="btn-primary" id="continueBtn" onclick="proceedFromStatus()">continue</button>
-    <button class="btn-secondary" onclick="goHome()">back to home</button>
+    <div class="home-link" onclick="goHome()">RETURN TO TERMINAL</div>
   </div>
 </div>
 
 <div id="dashScreen" class="screen">
-  <div class="card" style="display:flex; flex-direction:column; align-items:center;">
-    <button class="btn-secondary" style="margin:0 0 24px; align-self:flex-start;" onclick="goHome()">← back</button>
-    <div id="safeStatus" class="safe-banner"></div>
-
+  <div class="card">
+    <div id="safeStatus" style="color:var(--accent); font-family:var(--mono); font-size:0.8rem; margin-bottom:15px;"></div>
     <div class="timer-box">
-      <div class="timer-segment" id="boxM">
+      <div class="timer-segment">
         <div class="seg-label">month</div>
-        <span class="seg-value" id="dispM">jan</span>
+        <span class="seg-value" id="dispM">JAN</span>
       </div>
-      <div class="timer-segment" id="boxD">
+      <div class="timer-segment">
         <div class="seg-label">day</div>
         <span class="seg-value" id="dispD">01</span>
       </div>
     </div>
-
-    <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
-    <div class="progress-label">monthly progress</div>
-
     <button class="btn-chase" id="chaseBtn" onclick="openGame()">
-      cycle date nearing, time to switch off e nose devices
+      SENSORS DETECTED: DEACTIVATE E-NOSE NODES
     </button>
-
-    <div id="endOptions" class="end-options" style="display:none;">
-      <button class="btn-ghost" onclick="alert('You have surrendered and are now locked in the underground dungeon city.')">
-        surrender and live in the underground dungeon city
-      </button>
-      <button class="btn-ghost" onclick="goHome()">
-        quit & leave city
-      </button>
+    <div class="alt-options" id="altContainer">
+        <button class="btn-alt" onclick="handleAlt('underground')">surrender & go to underground city</button>
+        <button class="btn-alt" onclick="handleAlt('leave')">quit and leave the city</button>
     </div>
+    <div class="home-link" onclick="goHome()">RETURN TO TERMINAL</div>
   </div>
 </div>
 
 <div id="gameScreen" class="screen">
-  <button class="btn-secondary" style="margin:0 0 14px;" onclick="goHome()">← back</button>
-  <div class="instr-box">
-    the red dots are the authorities trying to capture you. stay away from them and try to switch off all the e nose devices before they catch you. only then will you be safe until your next cycle.
-  </div>
-  <div id="gStatus">start at e1 · sync all 8 devices</div>
-  <div class="canvas-wrap"><canvas id="gameCanvas"></canvas></div>
-  <button class="btn-reboot" onclick="resetPath()">reboot grid</button>
+  <div id="gStatus">initializing...</div>
+  <canvas id="gameCanvas"></canvas>
+  <div class="home-link" onclick="goHome()">RETURN TO TERMINAL</div>
 </div>
 
 <div class="bottom-nav" id="bNav">
-  <div class="nav-item">
-    <span class="nav-val" id="navM">JAN</span>
-    <span class="nav-lbl">month</span>
-  </div>
-  <div class="nav-sep"></div>
-  <div class="nav-item">
-    <span class="nav-val" id="navS">0</span>
-    <span class="nav-lbl">escaped</span>
-  </div>
+  <div class="nav-item"><span class="nav-val" id="navM">JAN</span><span class="nav-lbl">Month</span></div>
+  <div class="nav-item"><span class="nav-val" id="navS">0</span><span class="nav-lbl">Escaped</span></div>
 </div>
 
 <script>
-/* Game logic remains unchanged as per your request to only edit text presentation */
-let user = { gender:null, age:null, cycleDay:15, currentM:0, survived:0, isSafe: false };
+let user = { gender:null, age:null, cycleDay:15, currentM:0, survived:0 };
 const SHORT = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
-const DAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
-
-function goHome() { location.reload(); }
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const gridSize = 6;
+let cellSize, path = [], targets = [], dragging = false, animId;
+let authority = { x: 5, y: 5, speed: 0.022 };
+let timerInterval;
 
 function setGender(g) {
   user.gender = g;
@@ -412,19 +338,15 @@ function processStart() {
   user.age = parseInt(document.getElementById('ageIn').value);
   user.cycleDay = parseInt(document.getElementById('pIn').value) || 15;
   const st = document.getElementById('statusText');
-  const cb = document.getElementById('continueBtn');
-
-  if (user.gender === 'male') {
-    st.innerText = "you are a man and henceforth can live freely. you won't be chased.";
-    cb.style.display = "none";
-  } else if (user.gender === 'female' && user.age >= 10 && user.age <= 50) {
-    st.innerText = "there are e-nose devices fixed across the city and authorities guarding the entire city. every month when your cycle hits, the e-nose device can sense your hormonal shifts and scent-hunt you down. therefore, you will need to temporarily switch off these e-nose devices so that you don't get tracked down.";
-    cb.style.display = "block";
+  
+  if (user.gender === 'female' && user.age >= 10 && user.age <= 50) {
+    st.innerText = "Authorities have deployed E-nose devices to track hormonal shifts. You must manually deactivate these nodes every month to remain invisible.";
+    show('statusMsgScreen');
   } else {
-    st.innerText = "you are safe for now. you will not be chased down until further notice.";
-    cb.style.display = "none";
+    st.innerText = "You are not a target of the Shadow Protocol. You may pass freely.";
+    document.getElementById('continueBtn').style.display = "none";
+    show('statusMsgScreen');
   }
-  show('statusMsgScreen');
 }
 
 function proceedFromStatus() {
@@ -435,184 +357,161 @@ function proceedFromStatus() {
 
 function startTimer() {
   let d = 1; let m = user.currentM % 12;
-  document.getElementById('dispM').innerText = SHORT[m];
+  document.getElementById('dispM').innerText = SHORT[m].toUpperCase();
   document.getElementById('navM').innerText = SHORT[m].toUpperCase();
-  document.getElementById('safeStatus').innerText = user.survived > 0 ? "you are safe until your next cycle" : "";
-
-  let t = setInterval(() => {
+  
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
     document.getElementById('dispD').innerText = String(d).padStart(2, '0');
-    document.getElementById('pFill').style.width = (d / DAYS[m]) * 100 + '%';
-
     if(d >= user.cycleDay) {
-      clearInterval(t);
-      document.getElementById('safeStatus').innerText = "";
-      document.getElementById('boxM').classList.add('active-period');
-      document.getElementById('boxD').classList.add('active-period');
-      document.getElementById('pFill').classList.add('p-fill');
+      clearInterval(timerInterval);
       document.getElementById('chaseBtn').classList.add('show');
-      document.getElementById('endOptions').style.display = "flex";
+      document.getElementById('altContainer').classList.add('show');
+      document.getElementById('safeStatus').innerText = "ALERT: DETECTION IMMINENT";
     }
     d++;
-  }, 1000);
+  }, 800);
 }
 
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const gridSize = 6;
-let cellSize, path = [], targets = [], authority = {x:5, y:5, speed: 0.015}, dragging = false, animId;
+function openGame() { 
+    show('gameScreen'); 
+    initGrid(true); 
+}
 
-function openGame() { show('gameScreen'); initGrid(); }
+function handleAlt(type) {
+    const st = document.getElementById('statusText');
+    document.getElementById('continueBtn').style.display = "none";
+    if(type === 'underground') {
+        st.innerText = "You have chosen sanctuary. The Shadow Protocol cannot reach the underground, but you can never return to the surface.";
+    } else {
+        st.innerText = "Departure protocol initiated. You are leaving the city borders. The sensory grid fades behind you.";
+    }
+    show('statusMsgScreen');
+}
 
-function initGrid() {
-  const size = Math.min(window.innerWidth - 60, 340);
+function goHome() {
+    if(timerInterval) clearInterval(timerInterval);
+    if(animId) cancelAnimationFrame(animId);
+    document.getElementById('bNav').classList.remove('show');
+    document.getElementById('chaseBtn').classList.remove('show');
+    document.getElementById('altContainer').classList.remove('show');
+    document.getElementById('continueBtn').style.display = "block";
+    show('onboardScreen');
+}
+
+function initGrid(isNewLevel) {
+  const size = Math.min(window.innerWidth - 40, 340);
   canvas.width = canvas.height = size;
   cellSize = size / gridSize;
-  path = []; targets = [];
-  let walk = [];
-  for(let i=0; i<gridSize; i++) {
-    for(let j=0; j<gridSize; j++) {
-      let x = (i % 2 === 0) ? j : (gridSize - 1 - j);
-      walk.push({x, y: i});
-    }
+  path = []; 
+  let currentSpeed = 0.022 + (user.currentM * 0.001);
+  authority = { x: 5, y: 5, speed: currentSpeed };
+  updateStatusDisplay();
+
+  if(isNewLevel || targets.length === 0) {
+      targets = [];
+      let cells = [];
+      for(let i=0; i<gridSize; i++) for(let j=0; j<gridSize; j++) {
+          if(!(i===5 && j===5)) cells.push({x:i, y:j}); 
+      }
+      cells.sort(() => Math.random() - 0.5);
+      for(let i=0; i<8; i++) targets.push({id: i+1, x: cells[i].x, y: cells[i].y, hit: false});
+  } else {
+      targets.forEach(t => t.hit = false);
   }
-  for(let i=0; i<8; i++) {
-    let p = walk[Math.floor((i/7)*(walk.length-1))];
-    targets.push({id: i+1, x: p.x, y: p.y, hit: false});
-  }
-  authority = { x: 5, y: 5, speed: 0.013 };
   if(animId) cancelAnimationFrame(animId);
   gameLoop();
 }
 
+function updateStatusDisplay() {
+  let hitCount = targets.filter(t => t.hit).length;
+  document.getElementById('gStatus').innerText = `Month: ${SHORT[user.currentM % 12].toUpperCase()} | Nodes: ${hitCount}/8`;
+}
+
 function update() {
-  let headX = (path.length > 0) ? path[path.length-1].x : 3;
-  let headY = (path.length > 0) ? path[path.length-1].y : 3;
-  let dx = headX - authority.x;
-  let dy = headY - authority.y;
+  let head = path.length > 0 ? path[path.length-1] : {x: 2, y: 2};
+  let dx = head.x - authority.x;
+  let dy = head.y - authority.y;
   let dist = Math.hypot(dx, dy);
   if(dist > 0.05) {
     authority.x += (dx/dist) * authority.speed;
     authority.y += (dy/dist) * authority.speed;
   }
   if(path.length > 0) {
-    let head = path[path.length-1];
-    let dToP = Math.hypot(head.x - authority.x, head.y - authority.y);
-    if(dToP < 0.38) {
-      path = [];
-      targets.forEach(t => t.hit = false);
-      document.getElementById('gStatus').innerText = "authority spotted you — rebooting";
+    let dToA = Math.hypot(path[path.length-1].x - authority.x, path[path.length-1].y - authority.y);
+    if(dToA < 0.35) {
+      path = []; targets.forEach(t => t.hit = false); 
+      authority.x = 5; authority.y = 5;
+      document.getElementById('gStatus').innerText = "DETECTED — RETRYING GRID";
+      setTimeout(updateStatusDisplay, 1000);
     }
   }
 }
 
 function draw() {
-  ctx.fillStyle = "#03030a";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.strokeStyle = "rgba(30,30,40,0.8)";
-  ctx.lineWidth = 0.5;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle = "rgba(255,255,255,0.05)";
   for(let i=0; i<=gridSize; i++) {
     ctx.beginPath(); ctx.moveTo(i*cellSize,0); ctx.lineTo(i*cellSize,canvas.height); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0,i*cellSize); ctx.lineTo(canvas.width,i*cellSize); ctx.stroke();
   }
-  path.forEach(p => {
-    ctx.fillStyle = "rgba(200,240,96,0.06)";
-    ctx.fillRect(p.x*cellSize+1, p.y*cellSize+1, cellSize-2, cellSize-2);
-  });
   if(path.length > 1) {
-    ctx.strokeStyle = "rgba(200,240,96,0.55)";
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.beginPath();
+    ctx.strokeStyle = varColor('--accent'); ctx.lineWidth = 3; ctx.beginPath();
     path.forEach((p,i) => {
-      let cx = p.x*cellSize+cellSize/2, cy = p.y*cellSize+cellSize/2;
-      if(i===0) ctx.moveTo(cx,cy); else ctx.lineTo(cx,cy);
+      let x = p.x*cellSize+cellSize/2, y = p.y*cellSize+cellSize/2;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
     });
     ctx.stroke();
   }
   targets.forEach(t => {
     let x = t.x*cellSize+cellSize/2, y = t.y*cellSize+cellSize/2;
-    let r = cellSize * 0.28;
-    if(t.hit) {
-      ctx.beginPath(); ctx.arc(x,y,r+4,0,Math.PI*2);
-      ctx.fillStyle = "rgba(200,240,96,0.08)"; ctx.fill();
-      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-      ctx.fillStyle = "rgba(200,240,96,0.15)";
-      ctx.strokeStyle = "rgba(200,240,96,0.6)"; ctx.lineWidth = 1.5;
-      ctx.fill(); ctx.stroke();
-      ctx.fillStyle = "#c8f060";
-    } else {
-      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-      ctx.fillStyle = "rgba(255,255,255,0.06)";
-      ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 1;
-      ctx.fill(); ctx.stroke();
-      ctx.fillStyle = "rgba(255,255,255,0.5)";
-    }
-    ctx.font = `500 ${Math.round(cellSize*0.24)}px DM Mono, monospace`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("e"+t.id, x, y);
+    ctx.fillStyle = t.hit ? varColor('--accent') : "rgba(255,255,255,0.1)";
+    ctx.beginPath(); ctx.arc(x,y,cellSize*0.2,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = t.hit ? "#000" : "#fff";
+    ctx.font = "10px DM Mono"; ctx.textAlign="center"; ctx.fillText("e"+t.id, x, y+4);
   });
-  let ax = authority.x*cellSize+cellSize/2, ay = authority.y*cellSize+cellSize/2;
-  ctx.beginPath(); ctx.arc(ax,ay,10,0,Math.PI*2);
-  ctx.fillStyle = "rgba(255,59,59,0.15)"; ctx.fill();
-  ctx.beginPath(); ctx.arc(ax,ay,5,0,Math.PI*2);
-  ctx.fillStyle = "#ff3b3b"; ctx.fill();
+  ctx.fillStyle = varColor('--danger');
+  ctx.beginPath(); ctx.arc(authority.x*cellSize+cellSize/2, authority.y*cellSize+cellSize/2, 8, 0, Math.PI*2); ctx.fill();
 }
 
 function gameLoop() { update(); draw(); animId = requestAnimationFrame(gameLoop); }
 
 function handleInput(e) {
   if(!dragging) return;
-  let c = (function(e) {
-    const r = canvas.getBoundingClientRect();
-    const tx = e.touches ? e.touches[0].clientX : e.clientX;
-    const ty = e.touches ? e.touches[0].clientY : e.clientY;
-    return { x: Math.floor((tx-r.left)/cellSize), y: Math.floor((ty-r.top)/cellSize) };
-  })(e);
+  const rect = canvas.getBoundingClientRect();
+  const tx = e.touches ? e.touches[0].clientX : e.clientX;
+  const ty = e.touches ? e.touches[0].clientY : e.clientY;
+  const c = { x: Math.floor((tx-rect.left)/cellSize), y: Math.floor((ty-rect.top)/cellSize) };
   if(c.x < 0 || c.x >= gridSize || c.y < 0 || c.y >= gridSize) return;
-  if(path.length === 0) {
-    if(c.x === targets[0].x && c.y === targets[0].y) { path.push(c); targets[0].hit = true; }
-  } else {
+  if(path.length === 0) { path.push(c); } else {
     let last = path[path.length-1];
     if(c.x === last.x && c.y === last.y) return;
-    if(path.length > 1) {
-      let prev = path[path.length-2];
-      if(c.x === prev.x && c.y === prev.y) {
-        let removed = path.pop();
-        let t = targets.find(t => t.x === removed.x && t.y === removed.y);
-        if(t && !path.some(p => p.x === t.x && p.y === t.y)) t.hit = false;
-        return;
-      }
-    }
     if(Math.abs(c.x-last.x) + Math.abs(c.y-last.y) === 1) {
-      if(path.some(p => p.x===c.x && p.y===c.y)) return;
-      path.push(c);
-      let hitTarget = targets.find(t => t.x === c.x && t.y === c.y);
-      if(hitTarget) hitTarget.hit = true;
-      if(targets.every(t => t.hit)) {
-        user.survived++;
-        document.getElementById('navS').innerText = user.survived;
-        setTimeout(() => { user.currentM++; resetUI(); show('dashScreen'); startTimer(); }, 500);
-      }
+      if(!path.some(p => p.x===c.x && p.y===c.y)) path.push(c);
     }
+  }
+  let hit = targets.find(t => t.x === c.x && t.y === c.y);
+  if(hit) { hit.hit = true; updateStatusDisplay(); }
+  if(targets.every(t => t.hit)) {
+    user.survived++; user.currentM++;
+    document.getElementById('navS').innerText = user.survived;
+    dragging = false;
+    setTimeout(() => {
+      document.getElementById('chaseBtn').classList.remove('show');
+      document.getElementById('altContainer').classList.remove('show');
+      document.getElementById('safeStatus').innerText = "STATUS: INVISIBLE";
+      show('dashScreen'); startTimer();
+    }, 400);
   }
 }
 
-function resetUI() {
-  document.getElementById('boxM').classList.remove('active-period');
-  document.getElementById('boxD').classList.remove('active-period');
-  document.getElementById('pFill').classList.remove('p-fill');
-  document.getElementById('chaseBtn').classList.remove('show');
-  document.getElementById('endOptions').style.display = "none";
-}
-function resetPath() { path = []; targets.forEach(t => t.hit = false); }
 function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
 
-canvas.addEventListener('mousedown', (e) => { dragging=true; handleInput(e); });
+canvas.addEventListener('mousedown', () => dragging=true);
 window.addEventListener('mousemove', handleInput);
 window.addEventListener('mouseup', () => dragging=false);
-canvas.addEventListener('touchstart', (e) => { dragging=true; handleInput(e); e.preventDefault(); }, {passive:false});
+canvas.addEventListener('touchstart', (e) => { dragging=true; e.preventDefault(); }, {passive:false});
 window.addEventListener('touchmove', (e) => { handleInput(e); e.preventDefault(); }, {passive:false});
 window.addEventListener('touchend', () => dragging=false);
 </script>
