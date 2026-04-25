@@ -260,8 +260,8 @@
       <input type="number" id="ageIn" placeholder="—" oninput="checkForm()">
     </div>
     <div id="pSec" class="input-group" style="display:none;">
-      <label>cycle start day</label>
-      <input type="number" id="pIn" placeholder="day of month" oninput="checkForm()">
+      <label>cycle start date</label>
+      <input type="number" id="pIn" placeholder="date of month" oninput="checkForm()">
     </div>
     <button class="btn-primary" id="startBtn" onclick="processStart()" disabled>initiate run</button>
   </div>
@@ -284,7 +284,7 @@
         <span class="seg-value" id="dispM">JAN</span>
       </div>
       <div class="timer-segment">
-        <div class="seg-label">day</div>
+        <div class="seg-label">date</div>
         <span class="seg-value" id="dispD">01</span>
       </div>
     </div>
@@ -311,7 +311,7 @@
 </div>
 
 <script>
-let user = { gender:null, age:null, cycleDay:15, currentM:0, survived:0 };
+let user = { gender:null, age:null, cycleDate:15, currentM:0, survived:0 };
 const SHORT = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -336,7 +336,7 @@ function checkForm() {
 
 function processStart() {
   user.age = parseInt(document.getElementById('ageIn').value);
-  user.cycleDay = parseInt(document.getElementById('pIn').value) || 15;
+  user.cycleDate = parseInt(document.getElementById('pIn').value) || 15;
   const st = document.getElementById('statusText');
   
   if (user.gender === 'female' && user.age >= 10 && user.age <= 50) {
@@ -363,7 +363,7 @@ function startTimer() {
   if(timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     document.getElementById('dispD').innerText = String(d).padStart(2, '0');
-    if(d >= user.cycleDay) {
+    if(d >= user.cycleDate) {
       clearInterval(timerInterval);
       document.getElementById('chaseBtn').classList.add('show');
       document.getElementById('altContainer').classList.add('show');
