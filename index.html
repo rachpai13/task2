@@ -208,6 +208,21 @@
     text-transform: uppercase;
   }
 
+  .instruction-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 340px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--text-sub);
+  }
+
   .home-link {
     margin-top: 24px;
     font-family: var(--mono);
@@ -301,6 +316,14 @@
 
 <div id="gameScreen" class="screen">
   <div id="gStatus">initializing...</div>
+  
+  <div class="instruction-box">
+    <div style="color: var(--accent); margin-bottom: 6px; font-weight: 500;">Rules:</div>
+    1. Press-hold and drag to connect all the E-nose device boxes<br>
+    2. Move up, down, left or right<br>
+    3. Connect it all before the red dot authority gets to you
+  </div>
+
   <canvas id="gameCanvas"></canvas>
   <div class="home-link" onclick="goHome()">RETURN TO TERMINAL</div>
 </div>
@@ -382,9 +405,9 @@ function handleAlt(type) {
     const st = document.getElementById('statusText');
     document.getElementById('continueBtn').style.display = "none";
     if(type === 'underground') {
-        st.innerText = "You have chosen sanctuary. The Shadow Protocol cannot reach the underground, but you can never return to the surface.";
+        st.innerText = "The Shadow Protocol will not go underground, so you are safe, but you cannot return to the surface until your menstruation cycle has ended.";
     } else {
-        st.innerText = "Departure protocol initiated. You are leaving the city borders. The sensory grid fades behind you.";
+        st.innerText = "Leave now and never come back.";
     }
     show('statusMsgScreen');
 }
