@@ -172,21 +172,36 @@
   .seg-label { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; }
   .seg-value { font-family: var(--display); font-size: 2.5rem; color: var(--text); }
 
-  .btn-chase {
+  .alert-container {
     display: none;
-    background: var(--danger-dim);
-    color: var(--danger);
-    border: 1px solid rgba(255,59,59,0.3);
-    padding: 18px;
-    border-radius: 12px;
     width: 100%;
-    font-family: var(--sans);
-    cursor: pointer;
-    animation: pulse 1.5s infinite;
     margin-bottom: 12px;
   }
-  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-  .btn-chase.show { display: block; }
+  .alert-container.show { display: block; }
+
+  .btn-chase {
+    background: var(--danger);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.4px;
+    text-transform: capitalize;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 0 0 0 rgba(255, 59, 59, 0.5);
+    animation: alertPulse 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes alertPulse {
+    to { box-shadow: 0 0 0 15px rgba(255, 59, 59, 0); }
+  }
 
   .alt-options {
     display: none;
@@ -223,6 +238,57 @@
     color: var(--text-sub);
   }
 
+  .canvas-container {
+    position: relative;
+    width: 340px;
+    height: 340px;
+    margin-bottom: 20px;
+  }
+  canvas { 
+    border: 1px solid var(--border); 
+    border-radius: 12px; 
+    background: #03030a; 
+    width: 100%;
+    height: 100%;
+  }
+
+  .game-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 5, 7, 0.8);
+    backdrop-filter: blur(4px);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    z-index: 10;
+    animation: fadeIn 0.4s ease;
+  }
+  .game-overlay.show { display: flex; }
+
+  .success-badge {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .btn-proceed {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(200, 240, 96, 0.3);
+  }
+
   .home-link {
     margin-top: 24px;
     font-family: var(--mono);
@@ -240,8 +306,6 @@
     margin-bottom: 12px;
     text-transform: uppercase;
   }
-
-  canvas { border: 1px solid var(--border); border-radius: 8px; background: #03030a; margin-bottom: 20px; }
 
   .bottom-nav {
     position: fixed;
@@ -303,9 +367,13 @@
         <span class="seg-value" id="dispD">01</span>
       </div>
     </div>
-    <button class="btn-chase" id="chaseBtn" onclick="openGame()">
-      SENSORS DETECTED: DEACTIVATE E-NOSE NODES
-    </button>
+
+    <div class="alert-container" id="alertBox">
+        <button class="btn-chase" onclick="openGame()">
+          Start Deactivating E-nose Devices
+        </button>
+    </div>
+
     <div class="alt-options" id="altContainer">
         <button class="btn-alt" onclick="handleAlt('underground')">surrender & go to underground city</button>
         <button class="btn-alt" onclick="handleAlt('leave')">quit and leave the city</button>
@@ -316,15 +384,19 @@
 
 <div id="gameScreen" class="screen">
   <div id="gStatus">initializing...</div>
-  
   <div class="instruction-box">
     <div style="color: var(--accent); margin-bottom: 6px; font-weight: 500;">Rules:</div>
     1. Press-hold and drag to connect all the E-nose device boxes<br>
     2. Move up, down, left or right<br>
     3. Connect it all before the red dot authority gets to you
   </div>
-
-  <canvas id="gameCanvas"></canvas>
+  <div class="canvas-container">
+    <canvas id="gameCanvas"></canvas>
+    <div id="gameOverlay" class="game-overlay">
+      <div class="success-badge">Deactivated Successfully</div>
+      <button class="btn-proceed" onclick="finishLevel()">PROCEED TO NEXT MONTH</button>
+    </div>
+  </div>
   <div class="home-link" onclick="goHome()">RETURN TO TERMINAL</div>
 </div>
 
@@ -342,6 +414,7 @@ const gridSize = 6;
 let cellSize, path = [], targets = [], dragging = false, animId;
 let authority = { x: 5, y: 5, speed: 0.022 };
 let timerInterval;
+let isDestroying = false; 
 
 function setGender(g) {
   user.gender = g;
@@ -361,7 +434,6 @@ function processStart() {
   user.age = parseInt(document.getElementById('ageIn').value);
   user.cycleDate = parseInt(document.getElementById('pIn').value) || 15;
   const st = document.getElementById('statusText');
-  
   if (user.gender === 'female' && user.age >= 10 && user.age <= 50) {
     st.innerText = "Authorities have deployed E-nose devices to track hormonal shifts. You must manually deactivate these nodes every month to remain invisible.";
     show('statusMsgScreen');
@@ -382,21 +454,22 @@ function startTimer() {
   let d = 1; let m = user.currentM % 12;
   document.getElementById('dispM').innerText = SHORT[m].toUpperCase();
   document.getElementById('navM').innerText = SHORT[m].toUpperCase();
-  
   if(timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     document.getElementById('dispD').innerText = String(d).padStart(2, '0');
     if(d >= user.cycleDate) {
       clearInterval(timerInterval);
-      document.getElementById('chaseBtn').classList.add('show');
+      document.getElementById('alertBox').classList.add('show');
       document.getElementById('altContainer').classList.add('show');
-      document.getElementById('safeStatus').innerText = "ALERT: DETECTION IMMINENT";
+      document.getElementById('safeStatus').innerText = "e-nose tracking started";
     }
     d++;
   }, 800);
 }
 
 function openGame() { 
+    isDestroying = false;
+    document.getElementById('gameOverlay').classList.remove('show');
     show('gameScreen'); 
     initGrid(true); 
 }
@@ -416,20 +489,33 @@ function goHome() {
     if(timerInterval) clearInterval(timerInterval);
     if(animId) cancelAnimationFrame(animId);
     document.getElementById('bNav').classList.remove('show');
-    document.getElementById('chaseBtn').classList.remove('show');
+    document.getElementById('alertBox').classList.remove('show');
     document.getElementById('altContainer').classList.remove('show');
     document.getElementById('continueBtn').style.display = "block";
     show('onboardScreen');
 }
 
 function initGrid(isNewLevel) {
-  const size = Math.min(window.innerWidth - 40, 340);
-  canvas.width = canvas.height = size;
-  cellSize = size / gridSize;
+  const containerSize = 340;
+  canvas.width = containerSize;
+  canvas.height = containerSize;
+  cellSize = containerSize / gridSize;
   path = []; 
-  let currentSpeed = 0.022 + (user.currentM * 0.001);
-  authority = { x: 5, y: 5, speed: currentSpeed };
-  updateStatusDisplay();
+  
+  // LAPTOP BASE SPEED
+  let baseSpeed = 0.022 + (user.currentM * 0.001);
+  
+  // MOBILE DETECTION
+  const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 800);
+  
+  // HIGH SPEED FOR MOBILE
+  const mobileMultiplier = 2.4; 
+  
+  authority = { 
+    x: 5, 
+    y: 5, 
+    speed: isMobile ? baseSpeed * mobileMultiplier : baseSpeed 
+  };
 
   if(isNewLevel || targets.length === 0) {
       targets = [];
@@ -438,10 +524,11 @@ function initGrid(isNewLevel) {
           if(!(i===5 && j===5)) cells.push({x:i, y:j}); 
       }
       cells.sort(() => Math.random() - 0.5);
-      for(let i=0; i<8; i++) targets.push({id: i+1, x: cells[i].x, y: cells[i].y, hit: false});
+      for(let i=0; i<8; i++) targets.push({id: i+1, x: cells[i].x, y: cells[i].y, hit: false, melt: 1});
   } else {
-      targets.forEach(t => t.hit = false);
+      targets.forEach(t => { t.hit = false; t.melt = 1; });
   }
+  updateStatusDisplay();
   if(animId) cancelAnimationFrame(animId);
   gameLoop();
 }
@@ -452,6 +539,14 @@ function updateStatusDisplay() {
 }
 
 function update() {
+  if (isDestroying) {
+    let allMelted = true;
+    targets.forEach(t => { 
+        if(t.melt > 0) { t.melt -= 0.04; allMelted = false; }
+    });
+    if(allMelted) { document.getElementById('gameOverlay').classList.add('show'); }
+    return;
+  }
   let head = path.length > 0 ? path[path.length-1] : {x: 2, y: 2};
   let dx = head.x - authority.x;
   let dy = head.y - authority.y;
@@ -463,8 +558,7 @@ function update() {
   if(path.length > 0) {
     let dToA = Math.hypot(path[path.length-1].x - authority.x, path[path.length-1].y - authority.y);
     if(dToA < 0.35) {
-      path = []; targets.forEach(t => t.hit = false); 
-      authority.x = 5; authority.y = 5;
+      path = []; targets.forEach(t => t.hit = false); authority.x = 5; authority.y = 5;
       document.getElementById('gStatus').innerText = "DETECTED — RETRYING GRID";
       setTimeout(updateStatusDisplay, 1000);
     }
@@ -478,63 +572,94 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(i*cellSize,0); ctx.lineTo(i*cellSize,canvas.height); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0,i*cellSize); ctx.lineTo(canvas.width,i*cellSize); ctx.stroke();
   }
-  if(path.length > 1) {
-    ctx.strokeStyle = varColor('--accent'); ctx.lineWidth = 3; ctx.beginPath();
-    path.forEach((p,i) => {
-      let x = p.x*cellSize+cellSize/2, y = p.y*cellSize+cellSize/2;
-      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  if (path.length > 1) {
+    ctx.strokeStyle = varColor('--accent');
+    ctx.lineWidth = 4;
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.shadowBlur = isDestroying ? 20 : 10;
+    ctx.shadowColor = varColor('--accent');
+    ctx.beginPath();
+    path.forEach((p, i) => {
+      let x = p.x * cellSize + cellSize / 2;
+      let y = p.y * cellSize + cellSize / 2;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     });
     ctx.stroke();
+    ctx.shadowBlur = 0;
   }
   targets.forEach(t => {
-    let x = t.x*cellSize+cellSize/2, y = t.y*cellSize+cellSize/2;
+    if(t.melt <= 0) return;
+    let x = t.x * cellSize + cellSize / 2;
+    let y = t.y * cellSize + cellSize / 2;
+    ctx.globalAlpha = t.melt;
     ctx.fillStyle = t.hit ? varColor('--accent') : "rgba(255,255,255,0.1)";
-    ctx.beginPath(); ctx.arc(x,y,cellSize*0.2,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle = t.hit ? "#000" : "#fff";
-    ctx.font = "10px DM Mono"; ctx.textAlign="center"; ctx.fillText("e"+t.id, x, y+4);
+    ctx.beginPath();
+    ctx.arc(x, y, (cellSize * 0.22) * t.melt, 0, Math.PI * 2);
+    ctx.fill();
+    if(t.melt > 0.5) {
+      ctx.fillStyle = t.hit ? "#000" : "#fff";
+      ctx.font = "bold 11px DM Mono";
+      ctx.textAlign = "center";
+      ctx.fillText("e" + t.id, x, y + 4);
+    }
   });
-  ctx.fillStyle = varColor('--danger');
-  ctx.beginPath(); ctx.arc(authority.x*cellSize+cellSize/2, authority.y*cellSize+cellSize/2, 8, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 1;
+  if (!isDestroying) {
+    ctx.fillStyle = varColor('--danger');
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = varColor('--danger');
+    ctx.beginPath();
+    ctx.arc(authority.x * cellSize + cellSize / 2, authority.y * cellSize + cellSize / 2, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
 }
 
 function gameLoop() { update(); draw(); animId = requestAnimationFrame(gameLoop); }
 
 function handleInput(e) {
-  if(!dragging) return;
+  if (isDestroying) return;
+  if (!dragging) return;
   const rect = canvas.getBoundingClientRect();
-  const tx = e.touches ? e.touches[0].clientX : e.clientX;
-  const ty = e.touches ? e.touches[0].clientY : e.clientY;
-  const c = { x: Math.floor((tx-rect.left)/cellSize), y: Math.floor((ty-rect.top)/cellSize) };
-  if(c.x < 0 || c.x >= gridSize || c.y < 0 || c.y >= gridSize) return;
-  if(path.length === 0) { path.push(c); } else {
-    let last = path[path.length-1];
-    if(c.x === last.x && c.y === last.y) return;
-    if(Math.abs(c.x-last.x) + Math.abs(c.y-last.y) === 1) {
-      if(!path.some(p => p.x===c.x && p.y===c.y)) path.push(c);
+  const tx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  const ty = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  const c = { x: Math.floor(tx / cellSize), y: Math.floor(ty / cellSize) };
+  if (c.x < 0 || c.x >= gridSize || c.y < 0 || c.y >= gridSize) return;
+  if (path.length === 0) { path.push(c); } else {
+    let last = path[path.length - 1];
+    if (c.x === last.x && c.y === last.y) return;
+    if (Math.abs(c.x - last.x) + Math.abs(c.y - last.y) === 1) {
+      if (!path.some(p => p.x === c.x && p.y === c.y)) path.push(c);
     }
   }
-  let hit = targets.find(t => t.x === c.x && t.y === c.y);
-  if(hit) { hit.hit = true; updateStatusDisplay(); }
-  if(targets.every(t => t.hit)) {
-    user.survived++; user.currentM++;
-    document.getElementById('navS').innerText = user.survived;
-    dragging = false;
-    setTimeout(() => {
-      document.getElementById('chaseBtn').classList.remove('show');
-      document.getElementById('altContainer').classList.remove('show');
-      document.getElementById('safeStatus').innerText = "STATUS: INVISIBLE";
-      show('dashScreen'); startTimer();
-    }, 400);
-  }
+  targets.forEach(t => { t.hit = path.some(p => p.x === t.x && p.y === t.y); });
+  updateStatusDisplay();
+  if (targets.every(t => t.hit)) { dragging = false; isDestroying = true; }
 }
 
-function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+function finishLevel() {
+    user.survived++; user.currentM++;
+    document.getElementById('navS').innerText = user.survived;
+    document.getElementById('alertBox').classList.remove('show');
+    document.getElementById('altContainer').classList.remove('show');
+    document.getElementById('safeStatus').innerText = "STATUS: INVISIBLE";
+    document.getElementById('gameOverlay').classList.remove('show');
+    show('dashScreen'); startTimer();
+}
 
-canvas.addEventListener('mousedown', () => dragging=true);
+function show(id) { 
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); 
+    document.getElementById(id).classList.add('active'); 
+}
+function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+canvas.addEventListener('mousedown', (e) => { if(!isDestroying) { dragging=true; path=[]; handleInput(e); } });
 window.addEventListener('mousemove', handleInput);
 window.addEventListener('mouseup', () => dragging=false);
-canvas.addEventListener('touchstart', (e) => { dragging=true; e.preventDefault(); }, {passive:false});
+canvas.addEventListener('touchstart', (e) => { 
+  if(!isDestroying) { dragging=true; path=[]; handleInput(e); }
+  e.preventDefault(); 
+}, {passive:false});
 window.addEventListener('touchmove', (e) => { handleInput(e); e.preventDefault(); }, {passive:false});
 window.addEventListener('touchend', () => dragging=false);
 </script>
